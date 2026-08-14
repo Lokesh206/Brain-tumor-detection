@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Patient Registration</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+font-family:Segoe UI;
+}
+
+body{
+margin:0;
+background:linear-gradient(135deg,#1f3c88,#2a5298);
+min-height:100vh;
+}
+
+/* HEADER */
+
+.header{
+background:#0f1f4b;
+color:white;
+padding:20px;
+text-align:center;
+font-size:26px;
+font-weight:bold;
+}
+
+/* FORM BOX */
+
+.container{
+width:720px;
+margin:40px auto;
+background:white;
+padding:35px;
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,0.25);
+}
+
+/* GRID */
+
+.form-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:18px;
+}
+
+.full{
+grid-column:1/3;
+}
+
+/* LABEL */
+
+label{
+font-weight:600;
+font-size:14px;
+}
+
+/* INPUT */
+
+input,textarea{
+width:100%;
+padding:10px;
+margin-top:6px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+textarea{
+resize:none;
+height:80px;
+}
+
+/* PATIENT ID */
+
+.id-box{
+background:#eef3ff;
+border:1px solid #2f6fed;
+font-weight:bold;
+text-align:center;
+color:#2f6fed;
+}
+
+/* BUTTON */
+
+button{
+width:100%;
+background:linear-gradient(45deg,#2f6fed,#244fc2);
+color:white;
+border:none;
+padding:13px;
+border-radius:7px;
+margin-top:25px;
+font-size:16px;
+cursor:pointer;
+}
+
+/* SUCCESS */
+
+.success{
+background:#d4edda;
+color:#155724;
+padding:12px;
+border-radius:6px;
+margin-bottom:20px;
+text-align:center;
+font-weight:bold;
+}
+
+</style>
+
+<script>
+
+function calculateAge(){
+
+let dob=document.getElementById("dob").value
+
+if(dob=="") return
+
+let birthDate=new Date(dob)
+let today=new Date()
+
+let age=today.getFullYear()-birthDate.getFullYear()
+
+let m=today.getMonth()-birthDate.getMonth()
+
+if(m<0 || (m===0 && today.getDate()<birthDate.getDate())){
+age--
+}
+
+document.getElementById("age").value=age
+}
+
+</script>
+
+</head>
+
+<body>
+
+<div class="header">
+🧠 AI Brain Disorder Detection System
+</div>
+
+<div class="container">
+
+{% if success %}
+
+<div class="success">
+Patient Registered Successfully! <br>
+Patient ID : <b>{{generated_id}}</b><br>
+Redirecting to Dashboard...
+</div>
+
+<script>
+setTimeout(function(){
+window.location.href="/";
+},2000);
+</script>
+
+{% endif %}
+
+<form method="POST">
+
+<div class="form-grid">
+
+<div class="full">
+<label>Patient ID</label>
+<input type="text" class="id-box" value="{{generated_id}}" readonly>
+</div>
+
+<div>
+<label>Patient Name</label>
+<input type="text" name="name" required>
+</div>
+
+<div>
+<label>Email</label>
+<input type="email" name="email" required>
+</div>
+
+<div>
+<label>Mobile Number</label>
+<input type="text" name="mobile" required>
+</div>
+
+<div>
+<label>Date of Birth</label>
+<input type="date" id="dob" name="dob" onchange="calculateAge()" required>
+</div>
+
+<div>
+<label>Age</label>
+<input type="number" id="age" name="age" readonly>
+</div>
+
+<div class="full">
+<label>Address</label>
+<textarea name="address" required></textarea>
+</div>
+
+<div class="full">
+<label>Previous Symptoms</label>
+<textarea name="symptoms"></textarea>
+</div>
+
+<div class="full">
+<label>Description / Medical Notes</label>
+<textarea name="description"></textarea>
+</div>
+
+<div>
+<label>Doctor Consulted</label>
+<input type="text" name="doctor" required>
+</div>
+
+<div>
+<label>Visit Date</label>
+<input type="date" name="visit_date" required>
+</div>
+
+</div>
+
+<button type="submit">Register Patient</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NeuroScan AI - Medical Dashboard</title>
+
+<link
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+rel="stylesheet"
+/>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:
+linear-gradient(
+135deg,
+#0f2027,
+#203a43,
+#2c5364
+);
+color:white;
+min-height:100vh;
+overflow-x:hidden;
+}
+
+/* ===================================================
+HEADER
+=================================================== */
+
+.header{
+
+width:100%;
+
+padding:18px 35px;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+background:rgba(255,255,255,0.05);
+
+backdrop-filter:blur(12px);
+
+box-shadow:0 5px 25px rgba(0,0,0,0.35);
+
+border-bottom:1px solid rgba(255,255,255,0.05);
+
+position:sticky;
+
+top:0;
+
+z-index:999;
+}
+
+.logo{
+
+font-size:24px;
+
+font-weight:bold;
+
+color:#00e5ff;
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+}
+
+.nav{
+
+display:flex;
+
+gap:20px;
+}
+
+.nav a{
+
+color:white;
+
+text-decoration:none;
+
+font-size:15px;
+
+transition:0.3s;
+
+padding:8px 14px;
+
+border-radius:8px;
+}
+
+.nav a:hover{
+
+background:rgba(255,255,255,0.08);
+
+color:#00e5ff;
+
+transform:translateY(-2px);
+}
+
+/* ===================================================
+CONTAINER
+=================================================== */
+
+.container{
+
+display:grid;
+
+grid-template-columns:1fr 2fr 1fr;
+
+gap:22px;
+
+padding:25px;
+
+max-width:1650px;
+
+margin:auto;
+}
+
+/* ===================================================
+CARD
+=================================================== */
+
+.card{
+
+background:rgba(255,255,255,0.06);
+
+backdrop-filter:blur(12px);
+
+border-radius:22px;
+
+padding:22px;
+
+box-shadow:0 10px 30px rgba(0,0,0,0.35);
+
+border:1px solid rgba(255,255,255,0.05);
+
+transition:0.3s;
+}
+
+.card:hover{
+
+transform:translateY(-3px);
+}
+
+.card h3{
+
+margin-bottom:18px;
+
+color:#00e5ff;
+
+font-size:20px;
+}
+
+/* ===================================================
+INPUTS
+=================================================== */
+
+input,
+select{
+
+width:100%;
+
+padding:13px;
+
+margin-bottom:14px;
+
+border-radius:10px;
+
+border:none;
+
+background:rgba(255,255,255,0.08);
+
+color:white;
+
+outline:none;
+
+font-size:14px;
+
+border:1px solid rgba(255,255,255,0.05);
+}
+
+input::placeholder{
+
+color:#ddd;
+}
+
+select option{
+
+background:#203a43;
+}
+
+/* ===================================================
+BUTTONS
+=================================================== */
+
+button{
+
+width:100%;
+
+padding:14px;
+
+border:none;
+
+border-radius:12px;
+
+background:
+linear-gradient(
+135deg,
+#00e5ff,
+#0072ff
+);
+
+color:white;
+
+font-size:15px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+transition:0.3s;
+
+box-shadow:0 6px 18px rgba(0,0,0,0.25);
+}
+
+button:hover{
+
+transform:translateY(-2px) scale(1.02);
+}
+
+/* ===================================================
+STATS
+=================================================== */
+
+.stat{
+
+background:rgba(0,0,0,0.28);
+
+padding:14px;
+
+border-radius:12px;
+
+margin-bottom:12px;
+
+font-size:15px;
+
+border-left:4px solid #00e5ff;
+}
+
+.low{
+color:#4dff88;
+font-weight:bold;
+}
+
+.medium{
+color:#ffb347;
+font-weight:bold;
+}
+
+.high{
+color:#ff4d4d;
+font-weight:bold;
+}
+
+/* ===================================================
+WARNING
+=================================================== */
+
+.warning{
+
+margin-top:14px;
+
+background:rgba(255,193,7,0.15);
+
+color:#ffe082;
+
+padding:14px;
+
+border-radius:12px;
+
+font-size:13px;
+
+line-height:1.6;
+
+border:1px solid rgba(255,193,7,0.2);
+}
+
+/* ===================================================
+MRI VIEWER
+=================================================== */
+
+.main-preview{
+
+width:100%;
+
+height:560px;
+
+background:black;
+
+border-radius:22px;
+
+overflow:hidden;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+margin-bottom:20px;
+
+border:1px solid rgba(255,255,255,0.08);
+
+box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+.main-preview img{
+
+width:100%;
+
+height:100%;
+
+object-fit:contain;
+
+background:black;
+
+border-radius:18px;
+
+transition:0.3s;
+}
+
+/* ===================================================
+SLICE GRID
+=================================================== */
+
+.slice-container{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fill,minmax(150px,1fr));
+
+gap:14px;
+
+max-height:360px;
+
+overflow-y:auto;
+
+overflow-x:hidden;
+
+padding-right:10px;
+
+padding-bottom:10px;
+
+margin-top:10px;
+}
+
+.slice-container img{
+
+width:100%;
+
+height:130px;
+
+object-fit:cover;
+
+border-radius:14px;
+
+cursor:pointer;
+
+transition:0.3s;
+
+border:2px solid transparent;
+
+box-shadow:0 5px 15px rgba(0,0,0,0.3);
+}
+
+.slice-container img:hover{
+
+transform:scale(1.05);
+
+border:2px solid #00e5ff;
+
+box-shadow:0 0 18px rgba(0,229,255,0.5);
+}
+
+.active-slice{
+
+border:2px solid #00e5ff !important;
+
+box-shadow:0 0 18px rgba(0,229,255,0.5);
+}
+
+/* ===================================================
+3D VIEWER
+=================================================== */
+
+.viewer3d{
+
+height:760px;
+
+background:black;
+
+border-radius:24px;
+
+overflow:hidden;
+
+margin-top:20px;
+
+box-shadow:0 12px 35px rgba(0,0,0,0.45);
+
+border:1px solid rgba(255,255,255,0.06);
+}
+
+iframe{
+
+width:100%;
+
+height:100%;
+
+border:none;
+}
+
+/* ===================================================
+PROGRESS
+=================================================== */
+
+.progress{
+
+height:10px;
+
+background:#222;
+
+border-radius:20px;
+
+overflow:hidden;
+
+margin-top:10px;
+}
+
+.bar{
+
+height:100%;
+
+background:
+linear-gradient(
+90deg,
+#00e5ff,
+#0072ff
+);
+
+border-radius:20px;
+}
+
+/* ===================================================
+LOADER
+=================================================== */
+
+.loader{
+
+display:none;
+
+margin-top:15px;
+
+text-align:center;
+
+font-size:15px;
+
+color:#00e5ff;
+
+font-weight:bold;
+}
+
+/* ===================================================
+CHART
+=================================================== */
+
+canvas{
+
+margin-top:15px;
+
+background:white;
+
+border-radius:12px;
+
+padding:10px;
+}
+
+/* ===================================================
+EMPTY BOX
+=================================================== */
+
+.empty-box{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+height:100%;
+
+font-size:18px;
+
+color:#aaa;
+}
+
+/* ===================================================
+CUSTOM SCROLLBAR
+=================================================== */
+
+::-webkit-scrollbar{
+
+width:8px;
+height:8px;
+}
+
+::-webkit-scrollbar-track{
+
+background:#111;
+
+border-radius:20px;
+}
+
+::-webkit-scrollbar-thumb{
+
+background:#00e5ff;
+
+border-radius:20px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+background:#00bcd4;
+}
+
+/* ===================================================
+RESPONSIVE
+=================================================== */
+
+@media(max-width:1200px){
+
+.container{
+
+grid-template-columns:1fr;
+}
+
+.viewer3d{
+
+height:650px;
+}
+
+}
+
+@media(max-width:768px){
+
+.header{
+
+flex-direction:column;
+
+gap:15px;
+}
+
+.nav{
+
+flex-wrap:wrap;
+
+justify-content:center;
+}
+
+.main-preview{
+
+height:420px;
+}
+
+.viewer3d{
+
+height:500px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- ===================================================
+HEADER
+=================================================== -->
+
+<div class="header">
+
+<div class="logo">
+<i class="fas fa-brain"></i>
+NeuroScan AI
+</div>
+
+<div class="nav">
+
+<a href="/">
+<i class="fas fa-home"></i>
+Home
+</a>
+
+<a href="/analytics">
+<i class="fas fa-chart-line"></i>
+Analytics
+</a>
+
+<a href="/patients">
+<i class="fas fa-users"></i>
+Patients
+</a>
+
+</div>
+
+</div>
+
+<!-- ===================================================
+FORM
+=================================================== -->
+
+<form
+method="POST"
+enctype="multipart/form-data"
+onsubmit="showLoader()"
+>
+
+<div class="container">
+
+<!-- ===================================================
+LEFT PANEL
+=================================================== -->
+
+<div class="card">
+
+<h3>
+<i class="fas fa-user"></i>
+Patient Information
+</h3>
+
+<input
+name="name"
+placeholder="Enter patient name"
+value="{{name or ''}}"
+required
+>
+
+<input
+name="age"
+placeholder="Enter age"
+value="{{age or ''}}"
+required
+>
+
+<select name="gender" required>
+
+<option value="">Select Gender</option>
+
+<option
+value="Male"
+{% if gender=="Male" %}
+selected
+{% endif %}
+>
+Male
+</option>
+
+<option
+value="Female"
+{% if gender=="Female" %}
+selected
+{% endif %}
+>
+Female
+</option>
+
+</select>
+
+<hr style="margin:18px 0; opacity:0.2;">
+
+<h3>
+<i class="fas fa-chart-simple"></i>
+Analysis Results
+</h3>
+
+<div class="stat">
+🆔 Patient ID:
+<b>{{patient_id or 'N/A'}}</b>
+</div>
+
+<div class="stat">
+🧠 Result:
+<b>{{result or 'No Analysis Yet'}}</b>
+</div>
+
+<div class="stat">
+
+⚠ Risk Level:
+
+<span class="
+{% if risk=='High' %}
+high
+{% elif risk=='Medium' %}
+medium
+{% else %}
+low
+{% endif %}
+">
+
+{{risk or 'N/A'}}
+
+</span>
+
+</div>
+
+<div class="stat">
+📈 Growth:
+{{growth[-1] if growth else 0}} cm³
+</div>
+
+{% if tumor_type %}
+
+<div class="stat">
+🧬 Tumor Type:
+<b>{{tumor_type}}</b>
+</div>
+
+{% endif %}
+
+<div class="warning">
+⚠️ AI diagnosis is assistive only.
+Always consult certified medical professionals.
+</div>
+
+</div>
+
+<!-- ===================================================
+CENTER PANEL
+=================================================== -->
+
+<div class="card">
+
+<h3>
+<i class="fas fa-microscope"></i>
+MRI Slice Viewer
+</h3>
+
+<div class="main-preview">
+
+{% if slice_images %}
+
+<img
+id="mainImage"
+src="{{ url_for('static', filename=slice_images[0]) }}"
+>
+
+{% else %}
+
+<div class="empty-box">
+No MRI Uploaded
+</div>
+
+{% endif %}
+
+</div>
+
+<!-- ===================================================
+SLICE IMAGES
+=================================================== -->
+
+<div class="slice-container">
+
+{% for img in slice_images %}
+
+<img
+
+class="slice-img {% if loop.first %}active-slice{% endif %}"
+
+src="{{ url_for('static', filename=img) }}"
+
+onclick="changeImage(this)"
+
+>
+
+{% endfor %}
+
+</div>
+
+<hr style="margin:20px 0; opacity:0.2;">
+
+<!-- ===================================================
+3D VIEWER
+=================================================== -->
+
+<h3>
+<i class="fas fa-cube"></i>
+3D Brain Tumor Visualization
+</h3>
+
+<div class="viewer3d">
+
+{% if plot_file %}
+
+<iframe
+
+id="brainFrame"
+
+src="{{ url_for('static', filename=plot_file) }}?t={{ range(1,999999)|random }}">
+
+</iframe>
+
+{% else %}
+
+<div class="empty-box">
+⚠️ 3D Visualization Not Available
+</div>
+
+{% endif %}
+
+</div>
+
+</div>
+
+<!-- ===================================================
+RIGHT PANEL
+=================================================== -->
+
+<div class="card">
+
+<h3>
+<i class="fas fa-upload"></i>
+Upload MRI Scan
+</h3>
+
+<input
+type="file"
+name="file"
+accept=".nii,.nii.gz"
+required
+>
+
+<button type="submit">
+
+<i class="fas fa-brain"></i>
+
+Analyze MRI
+
+</button>
+
+<div class="loader" id="loader">
+⏳ AI Processing MRI Scan...
+</div>
+
+<hr style="margin:20px 0; opacity:0.2;">
+
+<div class="stat">
+📊 Tumor Volume:
+<b>{{volume or 0}} cm³</b>
+</div>
+
+<div class="stat">
+
+🎯 Confidence:
+<b>{{confidence or 0}}%</b>
+
+<div class="progress">
+
+<div
+class="bar"
+style="width:{{confidence or 0}}%">
+</div>
+
+</div>
+
+</div>
+
+<!-- ===================================================
+CHART
+=================================================== -->
+
+<canvas id="growthChart"></canvas>
+
+<!-- ===================================================
+REPORT BUTTON
+=================================================== -->
+
+{% if result %}
+
+<button
+type="button"
+onclick="generateReport()"
+style="margin-top:18px;"
+>
+
+<i class="fas fa-file-medical"></i>
+
+Generate Report
+
+</button>
+
+{% endif %}
+
+</div>
+
+</div>
+
+</form>
+
+<!-- ===================================================
+SCRIPT
+=================================================== -->
+
+<script>
+
+// =================================================
+// CHANGE MRI IMAGE
+// =================================================
+
+function changeImage(element){
+
+document.getElementById("mainImage").src =
+element.src;
+
+// REMOVE ACTIVE CLASS
+
+document.querySelectorAll(".slice-img")
+.forEach(img => {
+
+img.classList.remove("active-slice");
+
+});
+
+// ADD ACTIVE CLASS
+
+element.classList.add("active-slice");
+
+}
+
+// =================================================
+// SHOW LOADER
+// =================================================
+
+function showLoader(){
+
+document.getElementById("loader").style.display = "block";
+
+}
+
+// =================================================
+// GENERATE REPORT
+// =================================================
+
+function generateReport(){
+
+fetch("/report", {
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+name:"{{name or ''}}",
+age:"{{age or ''}}",
+gender:"{{gender or ''}}",
+volume:"{{volume or 0}}",
+risk:"{{risk or ''}}",
+confidence:"{{confidence or 0}}"
+
+})
+
+})
+
+.then(res => res.text())
+
+.then(html => {
+
+document.open();
+
+document.write(html);
+
+document.close();
+
+});
+
+}
+
+// =================================================
+// GROWTH CHART
+// =================================================
+
+let growthData =
+{{ growth|tojson|safe }} || [];
+
+if(!growthData || growthData.length===0){
+
+growthData=[0];
+
+}
+
+new Chart(
+
+document.getElementById("growthChart"),
+
+{
+
+type:'line',
+
+data:{
+
+labels:growthData.map(
+(_,i)=>"Scan "+(i+1)
+),
+
+datasets:[{
+
+label:"Tumor Growth",
+
+data:growthData,
+
+borderWidth:3,
+
+tension:0.4,
+
+fill:true
+
+}]
+},
+
+options:{
+
+responsive:true,
+
+plugins:{
+
+legend:{
+display:true
+}
+
+}
+
+}
+
+}
+
+);
+
+</script>
+
+</body>
+
+</html>

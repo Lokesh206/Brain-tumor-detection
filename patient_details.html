@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Patient Medical Report</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI;
+}
+
+body{
+background:linear-gradient(135deg,#1e3c72,#2a5298);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.container{
+width:900px;
+background:white;
+border-radius:15px;
+padding:35px;
+box-shadow:0 10px 35px rgba(0,0,0,0.25);
+}
+
+.header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+border-bottom:2px solid #f0f0f0;
+padding-bottom:15px;
+margin-bottom:20px;
+}
+
+.header h2{
+color:#2a5298;
+}
+
+.profile{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.avatar{
+width:60px;
+height:60px;
+border-radius:50%;
+background:#2a5298;
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:24px;
+font-weight:bold;
+}
+
+.section-title{
+margin-top:20px;
+margin-bottom:10px;
+font-weight:bold;
+color:#1e3c72;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+}
+
+.card{
+background:#f7f9fc;
+padding:12px 15px;
+border-radius:8px;
+border-left:4px solid #2a5298;
+}
+
+.card b{
+color:#333;
+}
+
+.report{
+margin-top:20px;
+padding:18px;
+border-radius:10px;
+background:#eef3ff;
+border-left:6px solid #2a5298;
+}
+
+.report div{
+margin:8px 0;
+font-size:16px;
+}
+
+.risk{
+font-weight:bold;
+color:#d9534f;
+}
+
+.confidence{
+color:#28a745;
+font-weight:bold;
+}
+
+.btn-area{
+text-align:center;
+margin-top:25px;
+}
+
+button{
+background:linear-gradient(135deg,#2a5298,#1e3c72);
+color:white;
+border:none;
+padding:12px 24px;
+font-size:15px;
+border-radius:8px;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{
+transform:scale(1.05);
+box-shadow:0 5px 15px rgba(0,0,0,0.3);
+}
+
+.notfound{
+text-align:center;
+color:red;
+font-size:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+{% if patient %}
+
+<div class="header">
+
+<div class="profile">
+<div class="avatar">
+{{patient[2][0]}}
+</div>
+
+<div>
+<h2>{{patient[2]}}</h2>
+<p>Patient ID : {{patient[1]}}</p>
+</div>
+</div>
+
+</div>
+
+<div class="section-title">Personal Information</div>
+
+<div class="grid">
+
+<div class="card"><b>Email :</b> {{patient[3]}}</div>
+<div class="card"><b>Mobile :</b> {{patient[4]}}</div>
+<div class="card"><b>Date of Birth :</b> {{patient[5]}}</div>
+<div class="card"><b>Age :</b> {{patient[6]}}</div>
+<div class="card"><b>Address :</b> {{patient[7]}}</div>
+<div class="card"><b>Doctor :</b> {{patient[10]}}</div>
+
+</div>
+
+<div class="section-title">Medical Information</div>
+
+<div class="grid">
+
+<div class="card"><b>Symptoms :</b> {{patient[8]}}</div>
+<div class="card"><b>Description :</b> {{patient[9]}}</div>
+<div class="card"><b>Visit Date :</b> {{patient[11]}}</div>
+
+</div>
+
+<div class="section-title">AI Tumor Analysis</div>
+
+<div class="report">
+
+<div><b>Tumor Volume :</b> {{patient[13]}} cm³</div>
+
+<div class="risk"><b>Risk Level :</b> {{patient[14]}}</div>
+
+<div class="confidence"><b>Confidence :</b> {{patient[15]}}%</div>
+
+</div>
+
+<div class="btn-area">
+
+<a href="/report/{{patient[1]}}">
+<button>Download Medical Report</button>
+</a>
+
+</div>
+
+{% else %}
+
+<div class="notfound">Patient record not found</div>
+
+{% endif %}
+
+</div>
+
+</body>
+</html>

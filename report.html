@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Brain Disorder Medical Report</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{
+background:#eef2fa;
+font-family:Arial;
+padding:40px;
+}
+
+.report{
+width:900px;
+margin:auto;
+background:white;
+padding:40px;
+box-shadow:0 8px 20px rgba(0,0,0,0.15);
+border-radius:10px;
+}
+
+.header{
+border-bottom:4px solid #2f6edb;
+margin-bottom:25px;
+padding-bottom:10px;
+}
+
+.header h1{
+color:#2f6edb;
+margin:0;
+}
+
+.header p{
+color:#666;
+}
+
+.info{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+}
+
+.section{
+margin-top:30px;
+}
+
+.section h2{
+background:#2f6edb;
+color:white;
+padding:8px;
+border-radius:5px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+td{
+border:1px solid #ddd;
+padding:10px;
+}
+
+.result{
+color:#2f6edb;
+font-weight:bold;
+}
+
+.low{color:green;}
+.medium{color:orange;}
+.high{color:red;}
+
+ul{
+margin-top:10px;
+padding-left:20px;
+line-height:1.8;
+}
+
+.footer{
+margin-top:50px;
+display:flex;
+justify-content:space-between;
+}
+
+.signature{
+text-align:center;
+}
+
+.line{
+border-top:2px solid black;
+width:200px;
+margin-top:40px;
+}
+
+button{
+background:#2f6edb;
+color:white;
+border:none;
+padding:10px 20px;
+border-radius:5px;
+cursor:pointer;
+margin:10px;
+}
+
+.center{
+text-align:center;
+}
+
+.warning{
+background:#fff3cd;
+color:#856404;
+padding:10px;
+border-radius:5px;
+margin-top:20px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="report">
+
+{% if patient %}
+
+<!-- HEADER -->
+<div class="header">
+<h1>AI Brain Disorder Detection System</h1>
+<p>Neurological MRI Diagnostic Report</p>
+</div>
+
+<!-- PATIENT DETAILS -->
+<div class="info">
+
+<div>
+<b>Name:</b> {{ patient.name or 'N/A' }}<br><br>
+<b>Age:</b> {{ patient.age or 'N/A' }}<br><br>
+<b>Gender:</b> {{ patient.gender or 'N/A' }}
+</div>
+
+<div>
+<b>Department:</b> Neurology<br><br>
+<b>Hospital:</b> AI Neuro Medical Center<br><br>
+<b>Date:</b> {{ patient.date or 'N/A' }}
+</div>
+
+</div>
+
+<!-- RESULT -->
+<div class="section">
+
+<h2>AI Diagnosis Result</h2>
+
+<table>
+
+<tr>
+<td><b>Detected Disorder</b></td>
+<td class="result">
+{% if patient.volume|float > 0 %}
+Brain Tumor Detected
+{% else %}
+No Tumor Detected
+{% endif %}
+</td>
+</tr>
+
+<tr>
+<td><b>Tumor Volume</b></td>
+<td>{{ patient.volume or 0 }} cm³</td>
+</tr>
+
+<tr>
+<td><b>Confidence</b></td>
+<td>{{ patient.confidence or 0 }}%</td>
+</tr>
+
+<tr>
+<td><b>Risk Level</b></td>
+<td class="
+{% if patient.risk == 'High' %}high
+{% elif patient.risk == 'Medium' %}medium
+{% else %}low
+{% endif %}
+">
+{{ patient.risk or 'N/A' }}
+</td>
+</tr>
+
+<tr>
+<td><b>Tumor Type</b></td>
+<td>{{ patient.tumor_type or 'N/A' }}</td>
+</tr>
+
+<tr>
+<td><b>Growth</b></td>
+<td>{{ patient.growth or 0 }} cm³</td>
+</tr>
+
+</table>
+
+</div>
+
+<!-- CHART -->
+<div class="section">
+<h2>Analysis Chart</h2>
+<canvas id="chart"></canvas>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+let volume = Number("{{ patient.volume or 0 }}") || 0;
+let confidence = Number("{{ patient.confidence or 0 }}") || 0;
+
+new Chart(document.getElementById("chart"), {
+type: 'bar',
+data: {
+labels: ['Volume', 'Confidence'],
+datasets: [{
+label: 'Analysis',
+data: [volume, confidence]
+}]
+},
+options:{ responsive:true }
+});
+
+});
+</script>
+
+<!-- EXPLANATION -->
+<div class="section">
+
+<h2>AI Explanation</h2>
+
+{% if patient.volume|float == 0 %}
+<p>No tumor detected. Brain appears normal.</p>
+
+{% elif patient.risk == "Low" %}
+<p>Small tumor detected. Early stage — monitoring advised.</p>
+
+{% elif patient.risk == "Medium" %}
+<p>Moderate tumor detected. Medical consultation recommended.</p>
+
+{% elif patient.risk == "High" %}
+<p>Large tumor detected. Immediate attention required.</p>
+
+{% endif %}
+
+</div>
+
+<!-- TUMOR DETAILS -->
+{% if patient.volume|float > 0 %}
+<div class="section">
+
+<h2>Tumor Analysis</h2>
+
+<ul>
+<li><b>WT (Whole Tumor):</b> Present</li>
+<li><b>TC (Tumor Core):</b> Present</li>
+<li><b>ET (Enhancing Tumor):</b> Present</li>
+</ul>
+
+</div>
+{% endif %}
+
+<!-- DISCLAIMER -->
+<div class="warning">
+⚠️ This AI result is for assistance only. Please consult a certified medical professional.
+</div>
+
+<!-- PRECAUTIONS -->
+<div class="section">
+
+<h2>Doctor Precautions</h2>
+
+<ul>
+<li>Avoid stress and get proper rest</li>
+<li>Regular neurological checkups</li>
+<li>Maintain a healthy diet</li>
+<li>Avoid alcohol and smoking</li>
+<li>Report symptoms immediately</li>
+</ul>
+
+</div>
+
+<!-- TREATMENT -->
+<div class="section">
+
+<h2>Suggested Treatment</h2>
+
+<ul>
+<li>Further MRI/CT evaluation</li>
+<li>Consult neurosurgeon</li>
+<li>Surgery or radiation if required</li>
+<li>Follow-up scans every 3–6 months</li>
+</ul>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+
+<div>
+<b>AI System:</b> Brain Tumor Detection Model
+</div>
+
+<div class="signature">
+<div class="line"></div>
+Doctor Signature
+</div>
+
+</div>
+
+<!-- BUTTONS -->
+<div class="center">
+<button onclick="window.print()">🖨 Print</button>
+<button onclick="window.location.href='/'">🏠 Home</button>
+<button onclick="window.location.href='/patients'">📋 Patients</button>
+</div>
+
+{% else %}
+
+<div class="center">
+<h2>Patient Not Found</h2>
+</div>
+
+{% endif %}
+
+</div>
+
+</body>
+</html>
